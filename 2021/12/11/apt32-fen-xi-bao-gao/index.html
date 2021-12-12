@@ -513,34 +513,34 @@ APT32
 <p>此处应该有图 </p>
 <h2 id="动态分析"><a href="#动态分析" class="headerlink" title="动态分析"></a>动态分析</h2><hr>
 <p>样本伪装winword.exe，执行后在TEMP目录下释放2E90.tmp文件</p>
-<p><img src="./images/image-20210614184152945.png" alt="image-20210614184152945"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210614184152945.png" alt="image-20210614184152945"></p>
 <p>由2E90.temp文件反向写winword.exe文件</p>
-<p><img src="./images/image-20210614185047255.png" alt="image-20210614185047255"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210614185047255.png" alt="image-20210614185047255"></p>
 <p>随后打开一个带密码的.docx文档来迷惑受害者</p>
-<h2 id=""><a href="#" class="headerlink" title=""></a><img src="./images/image-20210614184610777.png" alt="image-20210614184610777"></h2><h2 id="样本分析"><a href="#样本分析" class="headerlink" title="样本分析"></a>样本分析</h2><p>一如既往，使用了大量的花指令来对抗分析</p>
-<p><img src="./images/image-20210614202106579.png" alt="image-20210614202106579"></p>
+<h2 id=""><a href="#" class="headerlink" title=""></a><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210614184610777.png" alt="image-20210614184610777"></h2><h2 id="样本分析"><a href="#样本分析" class="headerlink" title="样本分析"></a>样本分析</h2><p>一如既往，使用了大量的花指令来对抗分析</p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210614202106579.png" alt="image-20210614202106579"></p>
 <p>跟踪代码几次后，可以发现其在入口处来回跳转，循环0xF5718次才会进入核心代码</p>
-<p><img src="./images/image-20210614202354578.png" alt="image-20210614202354578"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210614202354578.png" alt="image-20210614202354578"></p>
 <p>首先对起始地址为0x45A00，大小为0x5DC00的空间修改内存保护属性为<strong>PAGE_READWRITE</strong></p>
-<p><img src="./images/image-20210614204434200.png" alt="image-20210614204434200"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210614204434200.png" alt="image-20210614204434200"></p>
 <p>对起始地址为0x45A00，大小为0x5DC00的数据，每次取前四字节数据与后字节数据交换位置进行简单解密</p>
-<p><img src="./images/image-20210614210153086.png" alt="image-20210614210153086"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210614210153086.png" alt="image-20210614210153086"></p>
 <p>随后修改其内存保护属性为<strong>PAGE_EXECUTE_READ</strong></p>
-<p><img src="./images/image-20210614210443843.png" alt="image-20210614210443843"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210614210443843.png" alt="image-20210614210443843"></p>
 <h3 id="主进程"><a href="#主进程" class="headerlink" title="主进程"></a>主进程</h3><p>样本首先设置异常码0x8001，让系统不显示关键错误处理程序消息框，而是将错误发送给调用进程</p>
-<p><img src="./images/image-20210608202816033.png" alt="image-20210608202816033"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210608202816033.png" alt="image-20210608202816033"></p>
 <p>然后动态加载存放在数组中的DLL，获取指定API</p>
-<p><img src="./images/image-20210608202952407.png" alt="image-20210608202952407"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210608202952407.png" alt="image-20210608202952407"></p>
 <p>通过GetTickCount函数获取的时间在temp目录下生成随机文件名，然后将其进行删除，以此确认temp目录能否生成唯一的文件名</p>
-<p><img src="./images/image-20210608205852881.png" alt="image-20210608205852881"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210608205852881.png" alt="image-20210608205852881"></p>
 <p>随后获取样本的句柄，每次获取0x200大小的数据寻找内嵌在样本中的NSI安装程序脚本</p>
-<p><img src="./images/image-20210608212720633.png" alt="image-20210608212720633"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210608212720633.png" alt="image-20210608212720633"></p>
 <p>获取系统默认言语</p>
-<p><img src="./images/image-20210609143650951.png" alt="image-20210609143650951"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210609143650951.png" alt="image-20210609143650951"></p>
 <p>创建窗口类名为”_Nb“的一个窗口</p>
-<p><img src="./images/image-20210609144120424.png" alt="image-20210609144120424"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210609144120424.png" alt="image-20210609144120424"></p>
 <p>循环对sub_401434函数进行传参调用，sub_401434是一个多达0x43个case的函数</p>
-<p><img src="./images/image-20210609144658112.png" alt="image-20210609144658112"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210609144658112.png" alt="image-20210609144658112"></p>
 <p>编写OD脚本对传入的参数进行统计</p>
 <pre><code>var f
 var x
@@ -570,72 +570,72 @@ stop:
   msg &quot;已初始化完成，即将创建进程！！！&quot;
 </code></pre>
 <p>OD脚本输出结果</p>
-<p><img src="./images/image-20210609145830112.png" alt="image-20210609145830112"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210609145830112.png" alt="image-20210609145830112"></p>
 <p>其中case 0x1F、0x18、0x19、是对一些数据进行初始化，case 5是对sub_401434函数进行递归调用</p>
-<p><img src="./images/image-20210609151134643.png" alt="image-20210609151134643"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210609151134643.png" alt="image-20210609151134643"></p>
 <p>case 0x1B中调用ExpandEnvironmentStringsA函数扩展环境变量字符串并将它们替换为为当前用户定义的值</p>
-<p><img src="./images/image-20210609153247911.png" alt="image-20210609153247911"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210609153247911.png" alt="image-20210609153247911"></p>
 <p>case 0xB主要作用为修改当前进程的当前目录为C:\Users\sam\AppData\Local\Temp</p>
-<p><img src="./images/image-20210609154540086.png" alt="image-20210609154540086"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210609154540086.png" alt="image-20210609154540086"></p>
 <p>case 0x14主要是在C:\Users\sam\AppData\Local\Temp目录下释放文件，并修改文件生成时间</p>
-<p><img src="./images/image-20210609161758292.png" alt="image-20210609161758292"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210609161758292.png" alt="image-20210609161758292"></p>
 <p>case 0xA主要修改文件属性</p>
-<p><img src="./images/image-20210609162705932.png" alt="image-20210609162705932"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210609162705932.png" alt="image-20210609162705932"></p>
 <p>case 0x14一共调用了6次，将压缩于样本中的文件释放在temp目录下</p>
-<p><img src="./images/image-20210609173218027.png" alt="image-20210609173218027"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210609173218027.png" alt="image-20210609173218027"></p>
 <p>case 0x34通过RegOpenKeyExA尝试打开Software下的aaehjyxfdrsaea注册表项</p>
-<p><img src="./images/image-20210609171321096.png" alt="image-20210609171321096"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210609171321096.png" alt="image-20210609171321096"></p>
 <p>case 0x13主要是在temp目录创建名字部分随机的.tmp文件</p>
-<p><img src="./images/image-20210609172348832.png" alt="image-20210609172348832"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210609172348832.png" alt="image-20210609172348832"></p>
 <p>case 0x29调用CreateProcessA创建新进程并传入参数，随后该进程结束</p>
-<p><img src="./images/image-20210609174805028.png" alt="image-20210609174805028"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210609174805028.png" alt="image-20210609174805028"></p>
 <h3 id="子进程"><a href="#子进程" class="headerlink" title="子进程"></a>子进程</h3><p>子进程先初始化数据</p>
-<p><img src="./images/image-20210609205927466.png" alt="image-20210609205927466"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210609205927466.png" alt="image-20210609205927466"></p>
 <p>调用释放程序Fewuxusahif.dll的导出函数Qasimozipili()，该函数主要作用是将释放的vesececune.ric读取到内存中，其大小为0x23A00</p>
-<p><img src="./images/image-20210609210839023.png" alt="image-20210609210839023"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210609210839023.png" alt="image-20210609210839023"></p>
 <p>调用释放程序vinoliwulab.dll的导出函数Mimiqijeba()，该函数主要作用是初始化一些数据，获取解密的密钥0x7582</p>
-<p><img src="./images/image-20210609215140537.png" alt="image-20210609215140537"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210609215140537.png" alt="image-20210609215140537"></p>
 <p>调用释放程序Hunoqoriqop.dll的导出函数qonuzutulax()，该函数主要作用是解密读取到内存中vesececune.ric，解密大小为0x23A00</p>
-<p><img src="./images/image-20210609215829708.png" alt="image-20210609215829708"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210609215829708.png" alt="image-20210609215829708"></p>
 <p>解密后包含一个PE文件和一些敏感API</p>
-<p><img src="./images/image-20210609220214895.png" alt="image-20210609220214895"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210609220214895.png" alt="image-20210609220214895"></p>
 <p>调用释放程序Zayimahizo.dlll的导出函数Zenumemuf()，先加载kernel32.dll，再获取上面解密的GetProcAddress、LoadLibraryA等敏感API的函数地址</p>
-<p><img src="./images/image-20210609221854526.png" alt="image-20210609221854526"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210609221854526.png" alt="image-20210609221854526"></p>
 <p>以传入的参数创建傀儡进程，传入的参数为原始母体程序路径，该手段常用于躲避常规的反病毒检测</p>
-<p><img src="./images/image-20210609233542595.png" alt="image-20210609233542595"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210609233542595.png" alt="image-20210609233542595"></p>
 <p>随后返回，此进程结束</p>
-<p><img src="./images/image-20210609234222548.png" alt="image-20210609234222548"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210609234222548.png" alt="image-20210609234222548"></p>
 <h3 id="傀儡进程1分析"><a href="#傀儡进程1分析" class="headerlink" title="傀儡进程1分析"></a>傀儡进程1分析</h3><p>加载资源，申请内存拷贝存放</p>
-<p><img src="./images/image-20210610154815563.png" alt="image-20210610154815563"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210610154815563.png" alt="image-20210610154815563"></p>
 <p>随后调用系统API，解密加载的资源，解密出来为一个CLASSID：{D3735205-6509-4D20-AFC7-B1FCB0FD2C21}</p>
-<p><img src="./images/image-20210610162517566.png" alt="image-20210610162517566"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210610162517566.png" alt="image-20210610162517566"></p>
 <p>拼接路径C:\Users\sam\AppData\Roaming{D3735205-6509-4D20-AFC7-B1FCB0FD2C21}，判断是否存在，不存在则创建</p>
-<p><img src="./images/image-20210610194533041.png" alt="image-20210610194533041"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210610194533041.png" alt="image-20210610194533041"></p>
 <p>然后删除之前释放在TEMP目录下的文件</p>
-<p><img src="./images/image-20210610195325624.png" alt="image-20210610195325624"></p>
-<p>加载资源，解密数据，调用RtlDecompressBuffer函数解压出来一个PE文件<img src="./images/image-20210610224959967.png" alt="image-20210610224959967"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210610195325624.png" alt="image-20210610195325624"></p>
+<p>加载资源，解密数据，调用RtlDecompressBuffer函数解压出来一个PE文件<img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210610224959967.png" alt="image-20210610224959967"></p>
 <p>将解密的PE以创建傀儡进程的方式运行</p>
-<p><img src="./images/image-20210610225153090.png" alt="image-20210610225153090"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210610225153090.png" alt="image-20210610225153090"></p>
 <h3 id="傀儡进程2分析"><a href="#傀儡进程2分析" class="headerlink" title="傀儡进程2分析"></a>傀儡进程2分析</h3><p>傀儡进程2先判断当前用户是否是管理员权限</p>
-<p><img src="./images/image-20210610231818737.png" alt="image-20210610231818737"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210610231818737.png" alt="image-20210610231818737"></p>
 <p>打开名为”TLS”的互斥体，打开失败则遍历进程查找是否有卡巴斯基杀毒软件相关程序avp.exe</p>
-<p><img src="./images/image-20210610235505637.png" alt="image-20210610235505637"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210610235505637.png" alt="image-20210610235505637"></p>
 <p>非管理员权限用户在%USERPROFILE%目录下释放自身内嵌的msiexec.exe并执行</p>
-<p><img src="./images/image-20210611000929276.png" alt="image-20210611000929276"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210611000929276.png" alt="image-20210611000929276"></p>
 <p>管理员权限用户在C:\Users\sam\AppData\Local\Temp\MSI目录下释放自身内嵌的PE文件msiexec.exe</p>
-<p><img src="./images/image-20210611001412129.png" alt="image-20210611001412129"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210611001412129.png" alt="image-20210611001412129"></p>
 <p>然后判断权限，在不同注册表下写入注册表项‘00E35EEE’，其键值为一块大小为0x7111加密后的数据</p>
-<p><img src="./images/image-20210611001806643.png" alt="image-20210611001806643"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210611001806643.png" alt="image-20210611001806643"></p>
 <p>将该PE文件拷贝给0DC.tmp，后读取到内存中，经简单异或加密后写入ImageBase注册表项</p>
-<p><img src="./images/image-20210611002911164.png" alt="image-20210611002911164"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210611002911164.png" alt="image-20210611002911164"></p>
 <p>成功写入副本后，调用ShellExecuteExW执行内嵌的msiexec.exe</p>
-<p><img src="./images/image-20210611003413583.png" alt="image-20210611003413583"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210611003413583.png" alt="image-20210611003413583"></p>
 <h3 id="内嵌PE分析"><a href="#内嵌PE分析" class="headerlink" title="内嵌PE分析"></a>内嵌PE分析</h3><p>内嵌的msiexec.exe与原始母体基本一致，仅.rsrc段不大相同</p>
-<p><img src="./images/image-20210611005606742.png" alt="image-20210611005606742"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210611005606742.png" alt="image-20210611005606742"></p>
 <p>查看整个代码逻辑，与原始母体程序一致，使用7z解压查看，仅内嵌的PE与原始母体程序不一致</p>
-<p><img src="./images/image-20210611113021060.png" alt="image-20210611113021060"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210611113021060.png" alt="image-20210611113021060"></p>
 <p>同原始母体程序一样，通过CreateProcessA传入参数创建新进程</p>
-<p><img src="./images/image-20210611114126389.png" alt="image-20210611114126389"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210611114126389.png" alt="image-20210611114126389"></p>
 <p>创建reyefiyevu.exe后，依次调用释放的DLL，其DLL作用如下</p>
 <table>
 <thead>
@@ -662,11 +662,11 @@ stop:
 </tr>
 </tbody></table>
 <p>创建新的傀儡进程，经分析，该傀儡进程和傀儡进程1行为基本一致，只是创建的傀儡进程变化了</p>
-<p><img src="./images/image-20210611131859662.png" alt="image-20210611131859662"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210611131859662.png" alt="image-20210611131859662"></p>
 <h3 id="后门分析"><a href="#后门分析" class="headerlink" title="后门分析"></a>后门分析</h3><p>通过PEB结构获取ntdll.dll的基址，通过hash算法获取指定函数地址</p>
-<p><img src="./images/image-20210612014638769.png" alt="image-20210612014638769"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210612014638769.png" alt="image-20210612014638769"></p>
 <p>拍进程快照，遍历寻找指定进程</p>
-<p><img src="./images/image-20210612015413083.png" alt="image-20210612015413083"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210612015413083.png" alt="image-20210612015413083"></p>
 <p>进程信息如下</p>
 <table>
 <thead>
@@ -713,17 +713,17 @@ stop:
 </tr>
 </tbody></table>
 <p>检测虚拟环境、检测指令执行时间</p>
-<p><img src="./images/image-20210612112222310.png" alt="image-20210612112222310"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210612112222310.png" alt="image-20210612112222310"></p>
 <p>初始化数据，包括敏感API地址、注册表启动项路径、shellcode</p>
-<p><img src="./images/image-20210612020337764.png" alt="image-20210612020337764"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210612020337764.png" alt="image-20210612020337764"></p>
 <p>最后跳转到shellcode执行，先在%ALLUSERSPROFILE%目录下创建副本svchost.exe</p>
-<p><img src="./images/image-20210612020549426.png" alt="image-20210612020549426"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210612020549426.png" alt="image-20210612020549426"></p>
 <p>然后注册表写入副本svchost.exe的启动项SunJavaUpdateSched</p>
-<p><img src="./images/image-20210612020941792.png" alt="image-20210612020941792"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210612020941792.png" alt="image-20210612020941792"></p>
 <p>随后建立WSASocket服务端，等待攻击者连接，成为一个后门程序</p>
-<p><img src="./images/image-20210612021305020.png" alt="image-20210612021305020"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210612021305020.png" alt="image-20210612021305020"></p>
 <p>最后创建cmd.exe进程</p>
-<p><img src="./images/image-20210612022522169.png" alt="image-20210612022522169"></p>
+<p><img src="./APT32%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A/image-20210612022522169.png" alt="image-20210612022522169"></p>
 <h2 id="查杀建议"><a href="#查杀建议" class="headerlink" title="查杀建议"></a>查杀建议</h2><p>结束描述为ffee的msiexec.exe进程，删除如下文件</p>
 <table>
 <thead>
